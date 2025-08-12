@@ -47,5 +47,6 @@ RAG learn
     - https://github.com/langchain-ai/langchain
     - https://github.com/chonkie-inc/chonkie
     - https://github.com/volcengine/ai-app-lab
+    - https://github.com/docling-project/docling (文档转markdown)
 2. Go
    - https://github.com/sashabaranov/go-openai
