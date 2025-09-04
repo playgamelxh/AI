@@ -19,12 +19,7 @@ type Rule struct {
 	Children []RuleElement `json:"children"` // 子元素（关键词或子规则）
 }
 
-// 规则集（包含多个规则，规则间为"或"关系）
-type RuleSet struct {
-	Rules []Rule `json:"rules"`
-}
-
-// 直接判断文本是否包含关键词（不区分大小写）
+// 直接判断文本是否包含关键词（区分大小写）
 func containsKeyword(text, keyword string) bool {
 	return strings.Contains(text, keyword)
 }
@@ -89,14 +84,11 @@ func matchRule(rule Rule, text string, depth int) bool {
 }
 
 // 匹配规则集：任意一个规则匹配即返回true
-func MatchRuleSet(ruleSet RuleSet, text string) bool {
+func MatchRuleSet(rules []Rule, text string) bool {
 	// 规则集为空时不匹配
-	if len(ruleSet.Rules) == 0 {
-		return false
-	}
 	
 	// 匹配每个规则，任意一个匹配则返回true
-	for i, rule := range ruleSet.Rules {
+	for i, rule := range rules {
 		fmt.Printf("=== 匹配规则集第 %d 个规则 ===\n", i+1)
 		if matchRule(rule, text, 1) {
 			return true
@@ -107,8 +99,7 @@ func MatchRuleSet(ruleSet RuleSet, text string) bool {
 
 func main() {
 	// 示例规则：(A&B|C)&(D|E)|F
-	ruleJSON := `{
-		"rules": [
+	ruleJSON := `[
 			{
 				"operator": "|",
 				"children": [
@@ -152,12 +143,11 @@ func main() {
 					{"type": "keyword", "value": "F"}
 				]
 			}
-		]
-	}`
+		]`
 	
 	// 解析规则JSON
-	var ruleSet RuleSet
-	if err := json.Unmarshal([]byte(ruleJSON), &ruleSet); err != nil {
+	var rules []Rule
+	if err := json.Unmarshal([]byte(ruleJSON), &rules); err != nil {
 		fmt.Printf("解析规则失败: %v\n", err)
 		return
 	}
@@ -175,7 +165,7 @@ func main() {
 	// 执行匹配并输出结果
 	for i, text := range testTexts {
 		fmt.Printf("\n===== 测试文本 %d: %q =====\n", i+1, text)
-		result := MatchRuleSet(ruleSet, text)
+		result := MatchRuleSet(rules, text)
 		fmt.Printf("测试文本 %d 最终匹配结果: %v\n", i+1, result)
 	}
 }
