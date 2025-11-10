@@ -1,6 +1,4 @@
-import torch
 from torchvision import datasets, transforms
-from PIL import Image
 
 # 加载MNIST测试集（已下载过则不会重复下载）
 test_data = datasets.MNIST(
